@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^6.2.3",
     "@nestjs/typeorm": "^6.1.1",
     "apollo-server-express": "^2.5.0",
+    "class-transformer": "^0.2.3",
     "graphql": "^14.3.0",
     "kuis-dharma-database": "git+https://github.com/jerfisen/kuis-dharma-database-dist.git",
     "pg": "^7.11.0",
