@@ -7,6 +7,7 @@ import {
     QuestionEntity,
     AnswerEntity,
     ExamWorkEntity,
+    QuestionAnswerEntity,
 } from 'kuis-dharma-database';
 
 const ENTITIES = [
@@ -14,6 +15,7 @@ const ENTITIES = [
     TopicEntity,
     ExamEntity,
     QuestionEntity,
+    QuestionAnswerEntity,
     AnswerEntity,
     ExamWorkEntity,
 ];
