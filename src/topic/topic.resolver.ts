@@ -9,7 +9,7 @@ export class TopicResolver {
         private readonly topic_service: TopicService,
     ){}
     @Query( returns => Topic )
-    async item( @Args() arg: ArgTopicId ): Promise<Topic> {
+    async topic( @Args() arg: ArgTopicId ): Promise<Topic> {
         try {
             return await this.topic_service.findByOne(arg.id);
         } catch ( error ) {
@@ -17,7 +17,7 @@ export class TopicResolver {
         }
     }
     @Query( returns => Topics )
-    async items( @Args() meta_page: ArgsPageInfo ): Promise<Topics> {
+    async topics( @Args() meta_page: ArgsPageInfo ): Promise<Topics> {
         try {
             return await this.topic_service.findByMany(meta_page);
         } catch ( error ) {
@@ -26,7 +26,7 @@ export class TopicResolver {
     }
 
     @Mutation( returns => Topic )
-    async createItem( @Args() args: ArgCreateTopic ) {
+    async createTopic( @Args() args: ArgCreateTopic ) {
         try {
             return await this.topic_service.create(args.name);
         } catch ( error ) {
