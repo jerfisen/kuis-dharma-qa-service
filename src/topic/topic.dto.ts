@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID, ArgsType } from 'type-graphql';
-import { PageInfo } from 'src/common/page.info';
+import { PageInfo } from '../common/page.info';
 
 @ObjectType()
 export class Topic {
