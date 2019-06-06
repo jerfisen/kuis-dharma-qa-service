@@ -10,6 +10,7 @@ import { TopicResolver } from './topic.resolver';
     ],
     exports: [
         TopicService,
+        TopicTransformer,
     ],
     providers: [
         TopicService,
