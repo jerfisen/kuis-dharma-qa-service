@@ -28,6 +28,14 @@ export class ArgTopicId {
 }
 
 @ArgsType()
+export class ArgTopicSeach {
+
+    @Field()
+    phrase: string;
+
+}
+
+@ArgsType()
 export class ArgCreateTopic {
 
     @Field()

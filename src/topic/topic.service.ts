@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { TopicEntity } from 'kuis-dharma-database';
 import { TopicTransformer } from './topic.transformer';
 import { Topic, Topics } from './topic.dto';
@@ -27,6 +27,21 @@ export class TopicService {
     public async findByMany( meta_page: ArgsPageInfo ): Promise<Topics> {
         try {
             const [topics, count] = await this.topic_repository.findAndCount({
+                take: meta_page.per_page,
+                skip: ( ( meta_page.current_page - 1 ) * meta_page.per_page ),
+            });
+            return this.transformer.toTopics( topics, count, meta_page );
+        } catch ( error ) {
+            throw error;
+        }
+    }
+
+    public async search( phrase: string, meta_page: ArgsPageInfo ): Promise<Topics> {
+        try {
+            const [ topics, count ] = await this.topic_repository.findAndCount({
+                where: {
+                    name: Like(`%${phrase}%`),
+                },
                 take: meta_page.per_page,
                 skip: ( ( meta_page.current_page - 1 ) * meta_page.per_page ),
             });
