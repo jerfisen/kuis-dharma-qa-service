@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, In } from 'typeorm';
 import { TopicEntity } from 'kuis-dharma-database';
 import { TopicTransformer } from './topic.transformer';
 import { Topic, Topics } from './topic.dto';
@@ -31,6 +31,18 @@ export class TopicService {
                 skip: ( ( meta_page.current_page - 1 ) * meta_page.per_page ),
             });
             return this.transformer.toTopics( topics, count, meta_page );
+        } catch ( error ) {
+            throw error;
+        }
+    }
+
+    public async findEntityInId( topic_ids: number[] ): Promise<TopicEntity[]> {
+        try {
+            return await this.topic_repository.find({
+                where: { 
+                    id: In(topic_ids),
+                },
+            });
         } catch ( error ) {
             throw error;
         }
