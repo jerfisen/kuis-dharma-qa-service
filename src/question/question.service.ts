@@ -5,6 +5,7 @@ import { QuestionEntity, AnswerEntity, QuestionAnswerEntity } from 'kuis-dharma-
 import { ArgsPageInfo } from '../common/page.info';
 import { Question, Questions, ArgCreateQuestion } from './question.dto';
 import { QuestionTransformer } from './question.transformer';
+import { TopicService } from '../topic/topic.service';
 
 @Injectable()
 export class QuestionService {
@@ -12,6 +13,7 @@ export class QuestionService {
         @InjectEntityManager()
         private readonly entity_manager: EntityManager,
         private readonly question_transformer: QuestionTransformer,
+        private readonly topic_service: TopicService,
     ) {}
 
     public async findByOne( id: string ): Promise<Question> {
@@ -25,6 +27,7 @@ export class QuestionService {
     public async create( question_input: ArgCreateQuestion ): Promise<Question> {
         try {
             let question = new QuestionEntity();
+            question.topics = await this.topic_service.findEntityInId( question_input.topics.map( ( id ) => Number(id) ) );
             question.text_content = question_input.text_content;
             question.media_content = question_input.media_content;
             const answers: AnswerEntity[] = [];
