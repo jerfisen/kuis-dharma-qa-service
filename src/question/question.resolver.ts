@@ -28,14 +28,4 @@ export class QuestionResolver {
             throw error;
         }
     }
-
-    @ResolveProperty()
-    async topics( @Parent() topic: Topic ): Promise<Topic[]> {
-        try {
-            return [];
-        } catch ( error ) {
-            throw error;
-        }
-    }
-
 }
