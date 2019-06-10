@@ -5,7 +5,7 @@ import * as firebase_admin from 'firebase-admin';
 
 async function bootstrap() {
 	firebase_admin.initializeApp({
-		credential: firebase_admin.credential.cert( require('./sassets/kuis-dharma-firebase-adminsdk-1j5uv-dda1db7735.json') ),
+		credential: firebase_admin.credential.cert( require(process.env.FIREBASE_CERT_PATH) ),
 		storageBucket: process.env.STORAGE_BUCKET_URL,
 	});
 
