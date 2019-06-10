@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { plainToClass } from 'class-transformer';
 import { TopicEntity } from "kuis-dharma-database";
-import { PageInfo, ArgsPageInfo } from '../common/page.info';
+import { PageInfo, ArgsPageInfo } from '../common/page.info.dto';
 import { Topic, Topics } from './topic.dto';
 
 @Injectable()

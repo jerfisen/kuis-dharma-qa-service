@@ -1,9 +1,12 @@
 import { Resolver, Query, Args, Mutation } from "@nestjs/graphql";
 import { Topic, ArgTopicId, Topics, ArgCreateTopic, ArgTopicSeach } from './topic.dto';
 import { TopicService } from './topic.service';
-import { ArgsPageInfo } from '../common/page.info';
+import { ArgsPageInfo } from '../common/page.info.dto';
+import { UseGuards } from "@nestjs/common";
+import { AuthGuard } from '../auth/auth.user.data';
 
 @Resolver( of => Topic )
+@UseGuards( AuthGuard )
 export class TopicResolver {
     constructor(
         private readonly topic_service: TopicService,
@@ -12,7 +15,7 @@ export class TopicResolver {
     @Query( returns => Topic )
     async topic( @Args() arg: ArgTopicId ): Promise<Topic> {
         try {
-            return await this.topic_service.findByOne(arg.id);
+            return await this.topic_service.loadOne(arg.id);
         } catch ( error ) {
             throw error;
         }
@@ -21,7 +24,7 @@ export class TopicResolver {
     @Query( returns => Topics )
     async topics( @Args() meta_page: ArgsPageInfo ): Promise<Topics> {
         try {
-            return await this.topic_service.findByMany(meta_page);
+            return await this.topic_service.loadMany(meta_page);
         } catch ( error ) {
             throw error;
         }

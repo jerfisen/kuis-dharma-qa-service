@@ -4,7 +4,7 @@ import { Repository, Like, In } from 'typeorm';
 import { TopicEntity } from 'kuis-dharma-database';
 import { TopicTransformer } from './topic.transformer';
 import { Topic, Topics } from './topic.dto';
-import { ArgsPageInfo } from '../common/page.info';
+import { ArgsPageInfo } from '../common/page.info.dto';
 
 @Injectable()
 export class TopicService {
@@ -14,7 +14,7 @@ export class TopicService {
         private readonly transformer: TopicTransformer,
     ) {}
 
-    public async findByOne( id: string ): Promise<Topic> {
+    public async loadOne( id: string ): Promise<Topic> {
         try {
             const topic = await this.topic_repository.findOne(id);
             if ( !topic ) throw new NotFoundException(id);
@@ -24,7 +24,7 @@ export class TopicService {
         }
     }
 
-    public async findByMany( meta_page: ArgsPageInfo ): Promise<Topics> {
+    public async loadMany( meta_page: ArgsPageInfo ): Promise<Topics> {
         try {
             const [topics, count] = await this.topic_repository.findAndCount({
                 take: meta_page.per_page,
@@ -36,7 +36,7 @@ export class TopicService {
         }
     }
 
-    public async findEntityInId( topic_ids: number[] ): Promise<TopicEntity[]> {
+    public async loadEntityInId( topic_ids: number[] ): Promise<TopicEntity[]> {
         try {
             return await this.topic_repository.find({
                 where: { 
