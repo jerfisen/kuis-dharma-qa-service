@@ -17,6 +17,7 @@ import { QuestionModule } from './question/question.module';
 			debug: true,
 			introspection: true,
 			playground: true,
+			context: ( { req } ) => ({ req }),
 		}),
 	],
 	controllers: [AppController],
