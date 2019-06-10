@@ -1,6 +1,6 @@
 import { ObjectType, Field, ArgsType, ID, InputType } from 'type-graphql';
 import { Topic } from '../topic/topic.dto';
-import { PageInfo } from '../common/page.info';
+import { PageInfo } from '../common/page.info.dto';
 
 @ObjectType()
 export class Answer {

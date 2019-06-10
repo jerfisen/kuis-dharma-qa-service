@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { QuestionEntity, AnswerEntity, QuestionAnswerEntity } from 'kuis-dharma-database';
-import { ArgsPageInfo } from '../common/page.info';
+import { ArgsPageInfo } from '../common/page.info.dto';
 import { Question, Questions, ArgCreateQuestion } from './question.dto';
 import { QuestionTransformer } from './question.transformer';
 import { TopicService } from '../topic/topic.service';
@@ -27,7 +27,7 @@ export class QuestionService {
     public async create( question_input: ArgCreateQuestion ): Promise<Question> {
         try {
             let question = new QuestionEntity();
-            question.topics = await this.topic_service.findEntityInId( question_input.topics.map( ( id ) => Number(id) ) );
+            question.topics = await this.topic_service.loadEntityInId( question_input.topics.map( ( id ) => Number(id) ) );
             question.text_content = question_input.text_content;
             question.media_content = question_input.media_content;
             const answers: AnswerEntity[] = [];
