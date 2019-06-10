@@ -13,13 +13,13 @@ export class TopicTransformer {
         } as Topic );
     }
 
-    toTopics( entities: TopicEntity[], count: number, meta_page: ArgsPageInfo ): Topics {
+    toTopics( entities: TopicEntity[], count: number, page_info: ArgsPageInfo ): Topics {
         return plainToClass( Topics, {
             list: entities.map( ( entity ) => this.toTopic( entity ) ),
             page_info: plainToClass( PageInfo, {
-                per_page: meta_page.per_page,
-                current_page: meta_page.current_page,
-                total_pages: meta_page.per_page > count ? 1 : Math.ceil( count / meta_page.per_page ),
+                per_page: +page_info.per_page,
+                page: +page_info.page,
+                total_pages: +page_info.per_page > count ? 1 : Math.ceil( count / +page_info.per_page ),
                 total_result: count,
             } as PageInfo ),
         } as Topics );

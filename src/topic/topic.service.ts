@@ -28,7 +28,7 @@ export class TopicService {
         try {
             const [topics, count] = await this.topic_repository.findAndCount({
                 take: meta_page.per_page,
-                skip: ( ( meta_page.current_page - 1 ) * meta_page.per_page ),
+                skip: ( ( meta_page.page - 1 ) * meta_page.per_page ),
             });
             return this.transformer.toTopics( topics, count, meta_page );
         } catch ( error ) {
@@ -55,7 +55,7 @@ export class TopicService {
                     name: Like(`%${phrase}%`),
                 },
                 take: meta_page.per_page,
-                skip: ( ( meta_page.current_page - 1 ) * meta_page.per_page ),
+                skip: ( ( meta_page.page - 1 ) * meta_page.per_page ),
             });
             return this.transformer.toTopics( topics, count, meta_page );
         } catch ( error ) {
