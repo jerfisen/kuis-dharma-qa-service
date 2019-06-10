@@ -9,7 +9,7 @@ export class PageInfo {
     total_result: number;
 
     @Field( type => Int )
-    current_page: number;
+    page: number;
 
     @Field( type => Int )
     per_page: number;
@@ -24,5 +24,5 @@ export class ArgsPageInfo {
 
     @Field( type => Int )
     @Min(1)
-    current_page: number = 1;
+    page: number = 1;
 }
