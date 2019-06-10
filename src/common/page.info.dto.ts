@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int, ID, ArgsType } from 'type-graphql';
+import { ObjectType, Field, Int, ArgsType } from 'type-graphql';
 import { Min, Max } from 'class-validator';
 @ObjectType()
 export class PageInfo {
