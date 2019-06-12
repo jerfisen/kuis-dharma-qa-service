@@ -1,8 +1,7 @@
-import { Resolver, Args, Mutation, ResolveProperty, Parent } from "@nestjs/graphql";
-import { Question, Answer, ArgCreateQuestion, ArgQuestionId } from './question.dto';
+import { Resolver, Args, Mutation, ResolveProperty, Parent, Query } from "@nestjs/graphql";
+import { Question, Answer, ArgCreateQuestion, ArgsDoExam } from './question.dto';
 import { QuestionService } from './question.service';
 import { AnswerService } from './answer.service';
-import { Topic } from '../topic/topic.dto';
 
 @Resolver( of => Question )
 export class QuestionResolver {
@@ -10,6 +9,15 @@ export class QuestionResolver {
         private readonly question_service: QuestionService,
         private readonly answer_service: AnswerService,
     ){}
+
+    @Query( returns => [Question] )
+    async doExam( @Args() args: ArgsDoExam): Promise<Question[]> {
+        try {
+            return await this.question_service.doExams( args.length, args.topic );
+        } catch ( error ) {
+            throw error;
+        }
+    }
 
     @Mutation( returns => Question )
     async createQuestion( @Args() args: ArgCreateQuestion ): Promise<Question> {

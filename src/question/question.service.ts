@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { QuestionEntity, AnswerEntity, QuestionAnswerEntity } from 'kuis-dharma-database';
-import { ArgsPageInfo } from '../common/page.info.dto';
-import { Question, Questions, ArgCreateQuestion } from './question.dto';
+import { Question, ArgCreateQuestion } from './question.dto';
 import { QuestionTransformer } from './question.transformer';
 import { TopicService } from '../topic/topic.service';
 
@@ -12,16 +11,28 @@ export class QuestionService {
     constructor(
         @InjectEntityManager()
         private readonly entity_manager: EntityManager,
+        @InjectRepository(QuestionEntity)
+        private readonly question_repository:  Repository<QuestionEntity>,
         private readonly question_transformer: QuestionTransformer,
         private readonly topic_service: TopicService,
     ) {}
 
-    public async findByOne( id: string ): Promise<Question> {
-        return null;
-    }
-
-    public async findByMany( meta_page: ArgsPageInfo ): Promise<Questions> {
-        return null;
+    public async doExams( length: number, topic_id: string ): Promise<Question[]> {
+        const topic = await this.topic_service.loadOne(topic_id.toString());
+        if ( !topic ) throw new NotFoundException('topic was not found');
+        const count = await this.question_repository.count({
+            where: {
+                topics: [ topic ],
+            },
+        });
+        if ( count < length ) throw new BadRequestException('not enough questions');
+        const questions = await this.question_repository.find({
+            where: {
+                topics: [ topic ],
+            },
+            take: length,
+        });
+        return questions.map( ( question ) => this.question_transformer.toQuestion(question) );
     }
 
     public async create( question_input: ArgCreateQuestion ): Promise<Question> {

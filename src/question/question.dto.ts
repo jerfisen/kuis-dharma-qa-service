@@ -1,4 +1,4 @@
-import { ObjectType, Field, ArgsType, ID, InputType } from 'type-graphql';
+import { ObjectType, Field, ArgsType, ID, Int, InputType } from 'type-graphql';
 import { Topic } from '../topic/topic.dto';
 import { PageInfo } from '../common/page.info.dto';
 
@@ -72,8 +72,18 @@ export class ArgCreateAnswer {
     media_content: string[];
 }
 
+@ArgsType()
 export class ArgQuestionId {
 
     @Field( type => ID )
     id: string;
+}
+
+@ArgsType()
+export class ArgsDoExam {
+    @Field( type => Int )
+    length: number;
+
+    @Field( type => ID )
+    topic: string;
 }
