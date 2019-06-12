@@ -3,7 +3,7 @@ import { createParamDecorator, Injectable, CanActivate, ExecutionContext } from 
 import AuthService from './auth.service';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-export class AuthUserData {
+export class AuthData {
     constructor(private readonly decoded_id_token: firebase_admin.auth.DecodedIdToken ){}
     public get uid(): string { return this.decoded_id_token.uid; }
     public get exp(): number { return this.decoded_id_token.exp; }
@@ -13,7 +13,7 @@ export class AuthUserData {
     public async getFirebaseUser(): Promise<firebase_admin.auth.UserRecord> { return await firebase_admin.auth().getUser(this.uid); }
     public isAnonymous(): boolean { return this.decoded_id_token.firebase.sign_in_provider === 'anonymous'; }
 }
-export const AuthUser = createParamDecorator( (data, [root, args, ctx, info]) => new AuthUserData(ctx.req.user) );
+export const AuthUser = createParamDecorator( (data, [root, args, ctx, info]) => new AuthData(ctx.req.user) );
 
 @Injectable()
 export class AuthGuard implements CanActivate {
