@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, In } from 'typeorm';
 import { QuestionEntity, AnswerEntity, QuestionAnswerEntity } from 'kuis-dharma-database';
 import { Question, ArgCreateQuestion } from './question.dto';
 import { QuestionTransformer } from './question.transformer';
@@ -20,19 +20,12 @@ export class QuestionService {
     public async doExams( length: number, topic_id: string ): Promise<Question[]> {
         const topic = await this.topic_service.loadOne(topic_id.toString());
         if ( !topic ) throw new NotFoundException('topic was not found');
-        const count = await this.question_repository.count({
-            where: {
-                topics: [ topic ],
-            },
-        });
+        const count = await this.question_repository.createQueryBuilder('count')
+            .innerJoin('count.topics', 'topic', 'topic.id = :topic_id', { topic_id }).getCount();
         if ( count < length ) throw new BadRequestException('not enough questions');
-        const questions = await this.question_repository.find({
-            where: {
-                topics: [ topic ],
-            },
-            take: length,
-        });
-        return questions.map( ( question ) => this.question_transformer.toQuestion(question) );
+        const questions = await this.question_repository.createQueryBuilder('count')
+            .innerJoinAndSelect('count.topics', 'topic', 'topic.id = :topic_id', { topic_id }).getMany();
+        return questions.map( ( entity ) => this.question_transformer.toQuestion( entity ) );
     }
 
     public async create( question_input: ArgCreateQuestion ): Promise<Question> {
