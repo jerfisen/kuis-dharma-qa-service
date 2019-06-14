@@ -46,7 +46,7 @@ export class ArgCreateQuestion {
     @Field()
     text_content: string;
 
-    @Field( type => [String] )
+    @Field( type => [String], { nullable: true } )
     media_content: string[];
 
     @Field( type => [ID] )
@@ -68,7 +68,7 @@ export class ArgCreateAnswer {
     @Field()
     text_content: string;
 
-    @Field( type => [String] )
+    @Field( type => [String], { nullable: true } )
     media_content: string[];
 }
 
