@@ -5,6 +5,7 @@ import { QuestionEntity, AnswerEntity, QuestionAnswerEntity } from 'kuis-dharma-
 import { Question, ArgCreateQuestion } from './question.dto';
 import { QuestionTransformer } from './question.transformer';
 import { TopicService } from '../topic/topic.service';
+import { LCG } from '../common/lcg';
 
 @Injectable()
 export class QuestionService {
@@ -23,9 +24,22 @@ export class QuestionService {
         const count = await this.question_repository.createQueryBuilder('count')
             .innerJoin('count.topics', 'topic', 'topic.id = :topic_id', { topic_id }).getCount();
         if ( count < length ) throw new BadRequestException('not enough questions');
-        const questions = await this.question_repository.createQueryBuilder('count')
-            .innerJoinAndSelect('count.topics', 'topic', 'topic.id = :topic_id', { topic_id }).getMany();
-        return questions.map( ( entity ) => this.question_transformer.toQuestion( entity ) );
+        const lcg = new LCG({
+            seed: Math.floor( Math.random() * ( length ) ) + 1,
+            modules: count,
+            multiplier: 1,
+            increment: 7,
+        });
+        const questions = await this.question_repository.createQueryBuilder('load')
+            .innerJoinAndSelect('load.topics', 'topic')
+            .where('topic.id = :topic_id', { topic_id })
+            .orderBy('random()')
+            .getMany();
+
+        const random_questions: QuestionEntity[] = [];
+        for( let i = 0; i < length; ++i ) random_questions.push( questions[ lcg.random ] );
+        //return questions.map( ( entity ) => this.question_transformer.toQuestion( entity ) );
+        return random_questions.map( ( entity ) => this.question_transformer.toQuestion( entity ) );
     }
 
     public async create( question_input: ArgCreateQuestion ): Promise<Question> {
