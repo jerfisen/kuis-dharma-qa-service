@@ -20,16 +20,16 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^6.3.1",
-    "@nestjs/core": "^6.3.1",
+    "@nestjs/common": "^6.4.1",
+    "@nestjs/core": "^6.4.1",
     "@nestjs/graphql": "^6.2.4",
     "@nestjs/passport": "^6.1.0",
-    "@nestjs/platform-express": "^6.3.1",
+    "@nestjs/platform-express": "^6.4.1",
     "@nestjs/typeorm": "^6.1.2",
-    "apollo-server-express": "^2.6.2",
+    "apollo-server-express": "^2.6.7",
     "class-transformer": "^0.2.3",
-    "firebase-admin": "^8.0.0",
-    "graphql": "^14.3.1",
+    "firebase-admin": "^8.2.0",
+    "graphql": "^14.4.2",
     "kuis-dharma-database": "git+https://github.com/jerfisen/kuis-dharma-database-dist.git",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
@@ -41,11 +41,11 @@
     "typeorm": "^0.2.18"
   },
   "devDependencies": {
-    "@nestjs/testing": "^6.3.1",
+    "@nestjs/testing": "^6.4.1",
     "@types/express": "^4.17.0",
     "@types/jest": "^23.3.13",
-    "@types/node": "^10.14.8",
-    "@types/supertest": "^2.0.7",
+    "@types/node": "^10.14.12",
+    "@types/supertest": "^2.0.8",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
@@ -54,7 +54,7 @@
     "ts-node": "^7.0.1",
     "tsconfig-paths": "^3.7.0",
     "tslint": "5.12.1",
-    "typescript": "^3.5.1"
+    "typescript": "^3.5.3"
   },
   "jest": {
     "moduleFileExtensions": [
