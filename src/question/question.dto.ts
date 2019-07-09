@@ -5,7 +5,7 @@ import { PageInfo } from '../common/page.info.dto';
 @ObjectType()
 export class Answer {
     @Field( type => ID )
-    id: number;
+    id: string;
 
     @Field()
     text_content: string;
