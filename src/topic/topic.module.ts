@@ -1,22 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TopicEntity } from 'kuis-dharma-database';
 import { TopicService } from './topic.service';
-import { TopicTransformer } from './topic.transformer';
 import { TopicResolver } from './topic.resolver';
 import { AuthModule } from '../auth/auth.module';
+import { Topic } from './topic.entity';
 @Module({
     imports: [ 
-        TypeOrmModule.forFeature([TopicEntity]),
+        TypeOrmModule.forFeature([Topic]),
         AuthModule,
     ],
     exports: [
         TopicService,
-        TopicTransformer,
     ],
     providers: [
         TopicService,
-        TopicTransformer,
         TopicResolver,
     ],
     controllers: [],

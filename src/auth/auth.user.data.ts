@@ -1,9 +1,12 @@
 import * as firebase_admin from 'firebase-admin';
-import { createParamDecorator, Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import AuthService from './auth.service';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { getConnection } from 'typeorm';
+import { User } from '../user/user.entity';
 
 export class AuthData {
+    private user: User = null;
     constructor(private readonly decoded_id_token: firebase_admin.auth.DecodedIdToken ){}
     public get uid(): string { return this.decoded_id_token.uid; }
     public get exp(): number { return this.decoded_id_token.exp; }
@@ -12,6 +15,34 @@ export class AuthData {
     public get iss(): string { return this.decoded_id_token.iss; }
     public async getFirebaseUser(): Promise<firebase_admin.auth.UserRecord> { return await firebase_admin.auth().getUser(this.uid); }
     public isAnonymous(): boolean { return this.decoded_id_token.firebase.sign_in_provider === 'anonymous'; }
+    public async getUser(): Promise<User> {
+        if ( this.isAnonymous ) throw new ForbiddenException('anonymous not allowed');
+        if ( !this.user ) {
+            this.user = await getConnection().getRepository(User).findOne({
+                where: { firebase_uid: this.decoded_id_token.uid },
+            });
+            if ( !this.user ) {
+                this.user = new User();
+                this.user.firebase_uid = this.uid;
+                this.user.fcm_token = [];
+                this.user = await getConnection().getRepository(User).save(this.user);
+            }
+        }
+        return this.user;
+    }
+    public async getUserId(): Promise<number> {
+        if (!this.user)
+            this.user = await getConnection().getRepository(User).findOne({
+                where: { firebase_uid: this.decoded_id_token.uid },
+            });
+            if ( !this.user ) {
+                this.user = new User();
+                this.user.firebase_uid = this.uid;
+                this.user.fcm_token = [];
+                this.user = await getConnection().getRepository(User).save(this.user);
+            }
+        return this.user.id;
+    }
 }
 export const AuthUser = createParamDecorator( (data, [root, args, ctx, info]) => new AuthData(ctx.req.user) );
 

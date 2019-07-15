@@ -1,5 +1,5 @@
 import { Resolver, Query, Args, Mutation } from "@nestjs/graphql";
-import { Topic, ArgTopicId, Topics, ArgCreateTopic, ArgTopicSeach } from './topic.dto';
+import { Topic, ArgTopicId, Topics, ArgCreateTopic, ArgTopicSearch } from './topic.entity';
 import { TopicService } from './topic.service';
 import { ArgsPageInfo } from '../common/page.info.dto';
 import { UseGuards } from "@nestjs/common";
@@ -31,7 +31,7 @@ export class TopicResolver {
     }
 
     @Query( returns => Topics )
-    async searchTopic( @Args() arg_phrase: ArgTopicSeach, meta_page: ArgsPageInfo ): Promise<Topics> {
+    async searchTopic( @Args() arg_phrase: ArgTopicSearch, meta_page: ArgsPageInfo ): Promise<Topics> {
         try {
             return await this.topic_service.search( arg_phrase.phrase,  meta_page );
         } catch ( error ) {

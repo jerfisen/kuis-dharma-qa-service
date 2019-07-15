@@ -1,5 +1,5 @@
 import { Resolver, Args, Mutation, ResolveProperty, Parent, Query } from "@nestjs/graphql";
-import { Question, Answer, ArgCreateQuestion, ArgsDoExam } from './question.dto';
+import { Question, Answer, ArgCreateQuestion, ArgsDoExam } from './question.entity';
 import { QuestionService } from './question.service';
 import { AnswerService } from './answer.service';
 

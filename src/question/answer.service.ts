@@ -1,31 +1,38 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { QuestionEntity, QuestionAnswerEntity } from 'kuis-dharma-database';
-import { Answer } from './question.dto';
-import { QuestionTransformer } from './question.transformer';
+import { Answer, Question, QuestionAnswer } from './question.entity';
 
 @Injectable()
 export class AnswerService {
     constructor(
-        @InjectRepository(QuestionEntity)
-        private readonly question_repository: Repository<QuestionEntity>,
-        @InjectRepository(QuestionAnswerEntity)
-        private readonly qa_entity: Repository<QuestionAnswerEntity>,
-        private readonly question_transformer: QuestionTransformer,
+        @InjectRepository( Answer )
+        private readonly repository: Repository<Answer>,
+        @InjectRepository(Question)
+        private readonly question_repository: Repository<Question>,
+        @InjectRepository(QuestionAnswer)
+        private readonly qa_entity: Repository<QuestionAnswer>,
     ) {}
 
     async findByQuestion( question_id: string ): Promise<Answer[]> {
         try {
             const question = await this.question_repository.findOne( question_id );
             if ( !question ) throw new NotFoundException('question was not found');
-            const answers = await this.qa_entity.find({
+            const qas = await this.qa_entity.find({
                 where: {
                     question,
                 },
                 relations: ['answer'],
             });
-            return answers.map( ( entity: QuestionAnswerEntity ) => this.question_transformer.toAnswer( entity.answer ) );
+            return qas.map( ( entity: QuestionAnswer ) => entity.answer );
+        } catch ( error ) {
+            throw error;
+        }
+    }
+
+    async loadOne( id: string ): Promise<Answer> {
+        try {
+            return await this.repository.findOne(id);
         } catch ( error ) {
             throw error;
         }

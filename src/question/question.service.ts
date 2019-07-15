@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository, In } from 'typeorm';
-import { QuestionEntity, AnswerEntity, QuestionAnswerEntity } from 'kuis-dharma-database';
-import { Question, ArgCreateQuestion } from './question.dto';
-import { QuestionTransformer } from './question.transformer';
+import { EntityManager, Repository } from 'typeorm';
+import { Question, Answer, QuestionAnswer, ArgCreateQuestion } from './question.entity';
 import { TopicService } from '../topic/topic.service';
 import { LCG } from '../common/lcg';
 
@@ -12,9 +10,8 @@ export class QuestionService {
     constructor(
         @InjectEntityManager()
         private readonly entity_manager: EntityManager,
-        @InjectRepository(QuestionEntity)
-        private readonly question_repository:  Repository<QuestionEntity>,
-        private readonly question_transformer: QuestionTransformer,
+        @InjectRepository(Question)
+        private readonly question_repository:  Repository<Question>,
         private readonly topic_service: TopicService,
     ) {}
 
@@ -36,26 +33,25 @@ export class QuestionService {
             .orderBy('random()')
             .getMany();
 
-        const random_questions: QuestionEntity[] = [];
+        const random_questions: Question[] = [];
         for( let i = 0; i < length; ++i ) random_questions.push( questions[ lcg.random ] );
-        //return questions.map( ( entity ) => this.question_transformer.toQuestion( entity ) );
-        return random_questions.map( ( entity ) => this.question_transformer.toQuestion( entity ) );
+        return random_questions;
     }
 
     public async create( question_input: ArgCreateQuestion ): Promise<Question> {
         try {
-            let question = new QuestionEntity();
-            question.topics = await this.topic_service.loadEntityInId( question_input.topics.map( ( id ) => Number(id) ) );
+            let question = new Question();
+            question.topics = this.topic_service.loadEntityInId( question_input.topics.map( ( id ) => Number(id) ) );
             question.text_content = question_input.text_content;
             question.media_content = question_input.media_content;
-            const answers: AnswerEntity[] = [];
-            const qas: QuestionAnswerEntity[] = [];
+            const answers: Answer[] = [];
+            const qas: QuestionAnswer[] = [];
             for ( const new_answer of question_input.answers ) {
-                const answer = new AnswerEntity();
+                const answer = new Answer();
                 answer.text_content = new_answer.text_content;
                 answer.media_content = new_answer.media_content;
                 answers.push(answer);
-                const qa = new QuestionAnswerEntity();
+                const qa = new QuestionAnswer();
                 if ( question_input.correct_answer === new_answer.id ) {
                     qa.correct_answer = true;
                 } else {
@@ -70,9 +66,18 @@ export class QuestionService {
                 await transaction_manager.save(answers);
                 await transaction_manager.save(qas);
             } );
-            return this.question_transformer.toQuestion(question);
+            return question;
         } catch ( error ) {
             throw error;
         }
     }
+
+    public async loadOne( id: string ) : Promise<Question> {
+        try {
+            return await this.question_repository.findOne(id);
+        } catch ( error ) {
+            throw error;
+        }
+    }
+
 }
