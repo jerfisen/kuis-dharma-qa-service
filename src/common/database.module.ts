@@ -1,23 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-    UserEntity,
-    TopicEntity,
-    ExamEntity,
-    QuestionEntity,
-    AnswerEntity,
-    ExamWorkEntity,
-    QuestionAnswerEntity,
-} from 'kuis-dharma-database';
+import { User } from '../user/user.entity';
+import { Topic } from '../topic/topic.entity';
+import { Question, Answer, QuestionAnswer } from '../question/question.entity';
+import { Exam, Work } from '../exam/exam.entity';
 
 const ENTITIES = [
-    UserEntity,
-    TopicEntity,
-    ExamEntity,
-    QuestionEntity,
-    QuestionAnswerEntity,
-    AnswerEntity,
-    ExamWorkEntity,
+    User,
+    Topic,
+    Question,
+    Answer,
+    QuestionAnswer,
+    Exam,
+    Work,
 ];
 
 @Module({
