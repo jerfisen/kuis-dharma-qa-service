@@ -1,9 +1,11 @@
+import { UseGuards } from "@nestjs/common";
 import { Resolver, Args, Mutation, Query } from "@nestjs/graphql";
-import { AuthUser, AuthData } from '../auth/auth.user.data';
+import { AuthUser, AuthData, AuthGuard } from '../auth/auth.user.data';
 import { Exam, Exams, ArgExam } from "./exam.entity";
 import { ExamService } from './exam.service';
 import { ArgsPageInfo } from "../common/page.info.dto";
 
+@UseGuards( AuthGuard )
 @Resolver( of => Exam )
 export class ExamResolver {
     constructor(
@@ -20,7 +22,7 @@ export class ExamResolver {
 	}
 
 	@Query( returns => Exams )
-	async loadMany( @AuthUser() auth: AuthData, @Args() arg_page_info: ArgsPageInfo ): Promise<Exams> {
+	async loadExams( @AuthUser() auth: AuthData, @Args() arg_page_info: ArgsPageInfo ): Promise<Exams> {
 		try {
 			return await this.service.loadMany(auth, arg_page_info);
 		} catch ( error ) {

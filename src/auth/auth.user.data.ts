@@ -1,6 +1,5 @@
 import * as firebase_admin from 'firebase-admin';
 import { createParamDecorator, Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
-import AuthService from './auth.service';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { getConnection } from 'typeorm';
 import { User } from '../user/user.entity';
@@ -14,7 +13,7 @@ export class AuthData {
     public get auth_time(): number { return this.decoded_id_token.auth_time; }
     public get iss(): string { return this.decoded_id_token.iss; }
     public async getFirebaseUser(): Promise<firebase_admin.auth.UserRecord> { return await firebase_admin.auth().getUser(this.uid); }
-    public isAnonymous(): boolean { return this.decoded_id_token.firebase.sign_in_provider === 'anonymous'; }
+    public get isAnonymous(): boolean {return this.decoded_id_token.firebase.sign_in_provider === 'anonymous';}
     public async getUser(): Promise<User> {
         if ( this.isAnonymous ) throw new ForbiddenException('anonymous not allowed');
         if ( !this.user ) {
@@ -48,9 +47,6 @@ export const AuthUser = createParamDecorator( (data, [root, args, ctx, info]) =>
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(
-        private readonly auth_service: AuthService,
-    ){}
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const ctx = GqlExecutionContext.create(context);
         if ( !ctx.getContext().req.headers ) return false;
@@ -58,7 +54,7 @@ export class AuthGuard implements CanActivate {
             const str_token: string[] = ( ( ctx.getContext().req.headers.authorization ) as string ).split(' ');
             if ( str_token.length !== 2 ) return false;
             try {
-                ctx.getContext().req.user = await this.auth_service.validate(str_token[1]);
+                ctx.getContext().req.user = await firebase_admin.auth().verifyIdToken(str_token[1], true);
             } catch ( error ) {
                 throw error;
             }

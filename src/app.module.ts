@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import DatabaseModule from './common/database.module';
 import { TopicModule } from './topic/topic.module';
 import { QuestionModule } from './question/question.module';
+import { ExamModule } from './exam/exam.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
 		DatabaseModule,
+		AuthModule,
 		TopicModule,
 		QuestionModule,
+		ExamModule,
 		GraphQLModule.forRoot({
 			installSubscriptionHandlers: true,
 			autoSchemaFile: 'schema.gql',
@@ -20,7 +22,5 @@ import { QuestionModule } from './question/question.module';
 			context: ( { req } ) => ({ req }),
 		}),
 	],
-	controllers: [AppController],
-	providers: [AppService],
 })
 export class AppModule {}

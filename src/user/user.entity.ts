@@ -37,19 +37,20 @@ export class User {
     @Field()
     uid: string;
 
-    @Field()
+    @Field({ nullable: true })
     email: string;
 
     @Field()
     is_email_verified: boolean;
 
+    @Field({ nullable: true })
     @Field()
     phone_number: string;
 
-    @Field()
+    @Field({ nullable: true })
     display_name: string;
 
-    @Field()
+    @Field({ nullable: true })
     photo_url: string;
 
     @Field()

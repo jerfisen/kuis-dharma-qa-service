@@ -15,12 +15,12 @@ export class Exam {
     @CreateDateColumn({ type: 'timestamptz', nullable: false })
     date: Date;
     
-    @Field( type => [User] )
+    @Field( type => User )
     @ManyToOne( type => User, user => user.id, { nullable: false, onDelete: 'CASCADE', lazy: true } )
     @JoinColumn({ name: 'user_entity', referencedColumnName: 'id' })
     user:  Promise<User>;
 
-    @Field( type => [Float] )
+    @Field( type => Float )
     skor: number;
 
     @Field( type => [Work] )
