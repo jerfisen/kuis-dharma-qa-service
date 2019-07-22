@@ -85,6 +85,27 @@ export class ExamService {
 		}
 	}
 
+	async loadManyAllUser( args_page_info: ArgsPageInfo ): Promise<Exams> {
+		try {
+			const [exams, count] = await this.exam_repository.findAndCount({
+				order: { date: 'DESC' },
+				take: +args_page_info.per_page,
+				skip: ( +args_page_info.page - 1 ) * +args_page_info.per_page,
+			});
+			const results = new Exams();
+
+			results.meta = new PageInfo();
+			results.meta.per_page = +args_page_info.per_page;
+			results.meta.page = +args_page_info.page;
+			results.meta.total_result = count;
+			results.meta.total_pages = count < +args_page_info.per_page ? 1 : Math.ceil( count / +args_page_info.per_page );
+			results.list = await Promise.all( exams.map( async ( exam ) => await this.loadOne( exam.id ) ) );
+			return results;
+		} catch ( error ) {
+			throw error;
+		}
+	}
+
 	async loadOne( id: string ): Promise<Exam> {
 		try {
 			const exam = await this.exam_repository.findOne(id);
