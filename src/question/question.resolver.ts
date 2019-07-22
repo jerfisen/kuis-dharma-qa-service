@@ -2,6 +2,8 @@ import { Resolver, Args, Mutation, ResolveProperty, Parent, Query } from "@nestj
 import { Question, Answer, ArgCreateQuestion, ArgsDoExam } from './question.entity';
 import { QuestionService } from './question.service';
 import { AnswerService } from './answer.service';
+import { ArgTopicId } from "../topic/topic.entity";
+import { Int } from "type-graphql";
 
 @Resolver( of => Question )
 export class QuestionResolver {
@@ -13,7 +15,16 @@ export class QuestionResolver {
     @Query( returns => [Question] )
     async doExam( @Args() args: ArgsDoExam): Promise<Question[]> {
         try {
-            return await this.question_service.doExams( args.length, args.topic );
+            return await this.question_service.doExams( args.length, args.topic, args.seed );
+        } catch ( error ) {
+            throw error;
+        }
+    }
+
+    @Query( returns => Int )
+    async countQuestions( @Args() arg: ArgTopicId ): Promise<number> {
+        try {
+            return await this.question_service.countQuestions(arg.id);
         } catch ( error ) {
             throw error;
         }

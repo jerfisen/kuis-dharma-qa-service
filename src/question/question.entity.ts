@@ -128,4 +128,7 @@ export class ArgsDoExam {
 
     @Field( type => ID )
     topic: string;
+
+    @Field( type => Int )
+    seed = -1;
 }

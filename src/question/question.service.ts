@@ -15,14 +15,17 @@ export class QuestionService {
         private readonly topic_service: TopicService,
     ) {}
 
-    public async doExams( length: number, topic_id: string ): Promise<Question[]> {
+    public async doExams( length: number, topic_id: string, seed: number ): Promise<Question[]> {
         const topic = await this.topic_service.loadOne(topic_id.toString());
         if ( !topic ) throw new NotFoundException('topic was not found');
         const count = await this.question_repository.createQueryBuilder('count')
             .innerJoin('count.topics', 'topic', 'topic.id = :topic_id', { topic_id }).getCount();
         if ( count < length ) throw new BadRequestException('not enough questions');
+        if ( seed !== -1 ) {
+            if ( seed < 0 || seed > count ) throw new BadRequestException('invalid seed value');
+        }
         const lcg = new LCG({
-            seed: Math.floor( Math.random() * ( length ) ) + 1,
+            seed: seed === -1 ? Math.floor( Math.random() * ( length ) ) + 1 : seed,
             modules: count,
             multiplier: 1,
             increment: 7,
@@ -30,12 +33,23 @@ export class QuestionService {
         const questions = await this.question_repository.createQueryBuilder('load')
             .innerJoinAndSelect('load.topics', 'topic')
             .where('topic.id = :topic_id', { topic_id })
-            .orderBy('random()')
+            //.orderBy('random()') //remove load by random, to provide same questions by same seed aka remove double random
             .getMany();
 
         const random_questions: Question[] = [];
         for( let i = 0; i < length; ++i ) random_questions.push( questions[ lcg.random ] );
         return random_questions;
+    }
+
+    public async countQuestions( topic_id: string ): Promise<number> {
+        try {
+            const topic = await this.topic_service.loadOne(topic_id.toString());
+            if ( !topic ) throw new NotFoundException('topic was not found');
+            return await this.question_repository.createQueryBuilder('count')
+            .innerJoin('count.topics', 'topic', 'topic.id = :topic_id', { topic_id }).getCount();
+        } catch ( error ) {
+            throw error;
+        }
     }
 
     public async create( question_input: ArgCreateQuestion ): Promise<Question> {
