@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, Column } from 'typeorm';
 import { User } from '../user/user.entity';
 import { ObjectType, ArgsType, InputType, Field, ID, Float } from 'type-graphql';
 import { Question, Answer } from '../question/question.entity';
@@ -25,6 +25,12 @@ export class Exam {
 
     @Field( type => [Work] )
     works: Work[];
+
+    @Column({
+        type: 'timestamptz',
+        nullable: true,
+    })
+    quiz: Date;
 }
 
 @ObjectType()
@@ -76,4 +82,13 @@ export class ArgsWork {
 export class ArgExam {
     @Field( type => [ArgsWork] )
     works: ArgsWork[];
+
+    @Field( { nullable: true } )
+    quiz: Date;
+}
+
+@ArgsType()
+export class ArgQuiz {
+    @Field( { nullable: true } )
+    quiz: Date;
 }

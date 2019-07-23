@@ -1,5 +1,5 @@
 import { Resolver, Args, Mutation, ResolveProperty, Parent, Query } from "@nestjs/graphql";
-import { Question, Answer, ArgCreateQuestion, ArgsDoExam } from './question.entity';
+import { Question, Answer, ArgCreateQuestion, ArgsDoExam, ArgQuestionId } from './question.entity';
 import { QuestionService } from './question.service';
 import { AnswerService } from './answer.service';
 import { ArgTopicId } from "../topic/topic.entity";
@@ -25,6 +25,15 @@ export class QuestionResolver {
     async countQuestions( @Args() arg: ArgTopicId ): Promise<number> {
         try {
             return await this.question_service.countQuestions(arg.id);
+        } catch ( error ) {
+            throw error;
+        }
+    }
+
+    @Query( returns => Question )
+    async loadQuestion( @Args() arg: ArgQuestionId ): Promise<Question> {
+        try {
+            return await this.question_service.loadOne(arg.id);
         } catch ( error ) {
             throw error;
         }
