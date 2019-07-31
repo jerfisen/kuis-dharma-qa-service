@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthData } from '../auth/auth.user.data';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, IsNull } from 'typeorm';
 import { Exam, Work, Exams, ArgExam, ArgQuiz } from './exam.entity';
 import { Question, Answer, QuestionAnswer } from '../question/question.entity';
 import { ArgsPageInfo, PageInfo } from '../common/page.info.dto';
@@ -67,7 +67,7 @@ export class ExamService {
 			const [exams, count] = await this.exam_repository.findAndCount({
 				where: {
 					user: await auth.getUser(),
-					quiz: null,
+					quiz: IsNull(),
 				},
 				order: { date: 'DESC' },
 				take: +args_page_info.per_page,
@@ -90,7 +90,7 @@ export class ExamService {
 	async loadManyAllUser( args_page_info: ArgsPageInfo ): Promise<Exams> {
 		try {
 			const [exams, count] = await this.exam_repository.findAndCount({
-				where: { quiz: null },
+				where: { quiz: IsNull() },
 				order: { date: 'DESC' },
 				take: +args_page_info.per_page,
 				skip: ( +args_page_info.page - 1 ) * +args_page_info.per_page,
